@@ -2,7 +2,6 @@
 
 ##load data
 
-setwd("~/Desktop/Psychologia/Univerzita/projekty/APVV 2018/Výstupy/Články s Lenkou/články - Lenka/dep_happy")
 library(haven)
 data <- read_sav("decisionmaking_happiness_depression.sav")
 
@@ -12,7 +11,6 @@ library(psych)
 library(mctest)
 library(rockchalk)
 library(apaTables)
-library(stargazer)
 library(lm.beta)
 
 #descriptives
@@ -28,7 +26,13 @@ table(data$gender) # 0 = males; 1 = females
 
 data$gender <- as.numeric(as.character(data$gender))
 
-#assumptions for regression
+##generate descriptive table
+
+data_describe_cor <- data_describe[,2:9]
+
+apa.cor.table(data_describe_cor, filename="Table1.doc", table.number=1)
+
+#assumptions for regressions
 
 ##target regression: depression ~ neuroticism + extraversion + satisficing + maximizing_goal + maximizing_strategy + self_rumination
 
@@ -120,99 +124,79 @@ VIF(lm(self_rumination ~ neuroticism + extraversion + satisficing +
          maximizing_goal + maximizing_strategy, data = data),
     all.diagnostics = TRUE)
 
-##linear model - depression
+###################################################
+### hierarchical linear regression - depression ###
+###################################################
 
-dep_lm <- lm(depression ~ age + gender + satisficing + 
-                   maximizing_strategy + maximizing_goal + neuroticism +
-                   extraversion + self_rumination, data = data)
+block1 <- lm(depression ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
+summary(block1)
+summary(block1_beta <- lm.beta(block1))
 
-summary(dep_lm)
+block2 <- update(block1, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+summary(block2)
+summary(block2_beta <- lm.beta(block2))
 
-summary(dep_lm_beta <- lm.beta(dep_lm))
+block3 <- update(block2, . ~ . + satisficing:neuroticism + 
+                   maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
+                   satisficing:extraversion + maximizing_strategy:extraversion + 
+                   maximizing_goal:extraversion + satisficing:self_rumination + 
+                   maximizing_strategy:self_rumination + 
+                   maximizing_goal:self_rumination)
+summary(block3)
 
-##linear model - depression - moderation
+summary(block3_beta <- lm.beta(block3))
 
-dep_lm_int <- lm(depression ~ age + gender + satisficing*neuroticism + 
-               maximizing_strategy*neuroticism + maximizing_goal*neuroticism +
-                  satisficing*extraversion + maximizing_strategy*extraversion + 
-               maximizing_goal*extraversion + satisficing*self_rumination + 
-               maximizing_strategy*self_rumination + 
-               maximizing_goal*self_rumination, data = data)
+anova(block1,block2,block3)
 
-summary(dep_lm_int)
+#moderation: depression ~ maximizing_goal*self_rumination 
 
-summary(dep_lm_int_beta <- lm.beta(dep_lm_int))
-
-#moderation: maximizing_goal*self_rumination 
-
-plotCurves(dep_lm_int, plotx="maximizing_goal", modx="self_rumination", modxVals="std.dev.",
+plotCurves(block3, plotx="maximizing_goal", modx="self_rumination", modxVals="std.dev.",
            col = c("blue", "black", "orange"),
            interval="confidence", cex.main = 0.95,
            main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
 
-#moderation: maximizing_strategy*neuroticism
+#moderation: depression ~ maximizing_strategy*neuroticism
 
-plotCurves(dep_lm_int, plotx="maximizing_strategy", modx="neuroticism", modxVals="std.dev.",
+plotCurves(block3, plotx="maximizing_strategy", modx="neuroticism", modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.92,
            interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
 
-##linear model - depression
+###################################################
+### hierarchical linear regression - happiness ###
+###################################################
 
-happy_lm <- lm(happiness ~ age + gender + satisficing + 
-                     maximizing_strategy + maximizing_goal + neuroticism + 
-                     extraversion + self_rumination, data = data)
+block1a <- lm(happiness ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
+summary(block1a)
+summary(block1a_beta <- lm.beta(block1a))
 
-summary(happy_lm)
+block2a <- update(block1a, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+summary(block2a)
+summary(block2a_beta <- lm.beta(block2a))
 
-summary(happy_lm_beta <- lm.beta(happy_lm))
+block3a <- update(block2a, . ~ . + satisficing:neuroticism + 
+                   maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
+                   satisficing:extraversion + maximizing_strategy:extraversion + 
+                   maximizing_goal:extraversion + satisficing:self_rumination + 
+                   maximizing_strategy:self_rumination + 
+                   maximizing_goal:self_rumination)
+summary(block3a)
+summary(block3a_beta <- lm.beta(block3a))
 
-##linear model - depression - moderation
+anova(block1a,block2a,block3a)
 
-happy_lm_int <- lm(happiness ~ age + gender + satisficing*neuroticism + 
-                 maximizing_strategy*neuroticism + maximizing_goal*neuroticism +
-                    satisficing*extraversion + maximizing_strategy*extraversion + 
-                 maximizing_goal*extraversion + satisficing*self_rumination + 
-                 maximizing_strategy*self_rumination + 
-                 maximizing_goal*self_rumination, data = data)
+#moderation: happiness ~ satisficing*neuroticism
 
-summary(happy_lm_int)
-
-##added standardized regression coeficient - beta
-
-summary(lm.beta(happy_lm_int))
-
-#moderation: satisficing*neuroticism
-
-plotCurves(happy_lm_int, plotx="satisficing", modx="neuroticism", modxVals="std.dev.",
+plotCurves(block3a, plotx="satisficing", modx="neuroticism", modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.95,
            interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
 
-#moderation: maximizing_goal*self_rumination
+#moderation: happiness ~ maximizing_goal*self_rumination
 
-plotCurves(happy_lm_int, plotx="maximizing_goal", modx="self_rumination", 
+plotCurves(block3a, plotx="maximizing_goal", modx="self_rumination", 
            modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.95,
            interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
 
-##generate tables
 
-data_describe_cor <- data_describe[,2:9]
 
-apa.cor.table(data_describe_cor, filename="Table1.doc", table.number=1)
-
-##linear model - interaction tables
-
-##depression
-
-stargazer(dep_lm, dep_lm_int,type="text",
-          column.labels = c("Main Effects", "Interaction"),
-          intercept.bottom = FALSE, single.row=TRUE, 
-          notes.append = FALSE, header=FALSE)
-
-##happiness
-
-stargazer(happy_lm, happy_lm_int,type="text",
-          column.labels = c("Main Effects", "Interactions"),
-          intercept.bottom = FALSE, single.row=TRUE, 
-          notes.append = FALSE, header=FALSE)
 
