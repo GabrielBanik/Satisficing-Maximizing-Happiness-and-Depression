@@ -198,5 +198,24 @@ plotCurves(block3a, plotx="maximizing_goal", modx="self_rumination",
            interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
 
 
+####alternative hypothesis as a suggestions in the discussion
+
+plotCurves(block3, plotx="neuroticism", modx="maximizing_strategy", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.92,
+           interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
+
+plotCurves(block3, plotx="self_rumination", modx="maximizing_goal", modxVals="std.dev.",
+           col = c("blue", "black", "orange"),
+           interval="confidence", cex.main = 0.95,
+           main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
+
+plotCurves(block3a, plotx="neuroticism", modx="satisficing", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.95,
+           interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
+
+plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal", 
+           modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.95,
+           interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
 
 

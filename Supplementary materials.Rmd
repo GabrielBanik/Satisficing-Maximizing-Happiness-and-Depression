@@ -1,0 +1,75 @@
+---
+title: "Alternative interpretations of moderation hypothesis"
+author: "Gabriel Baník"
+date: "4/29/2020"
+output: html_document
+---
+
+Alternative interpretations of moderation hypothesis as suggestion in the discussion
+
+```{r include=FALSE}
+library(haven)
+data <- read_sav("decisionmaking_happiness_depression.sav")
+```
+
+```{r include=FALSE}
+library(rockchalk)
+```
+
+```{r include=FALSE}
+###################################################
+### hierarchical linear regression - depression ###
+###################################################
+
+block1 <- lm(depression ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
+
+block2 <- update(block1, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+
+block3 <- update(block2, . ~ . + satisficing:neuroticism + 
+                   maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
+                   satisficing:extraversion + maximizing_strategy:extraversion + 
+                   maximizing_goal:extraversion + satisficing:self_rumination + 
+                   maximizing_strategy:self_rumination + 
+                   maximizing_goal:self_rumination)
+
+###################################################
+### hierarchical linear regression - happiness ###
+###################################################
+
+block1a <- lm(happiness ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
+
+block2a <- update(block1a, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+
+block3a <- update(block2a, . ~ . + satisficing:neuroticism + 
+                   maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
+                   satisficing:extraversion + maximizing_strategy:extraversion + 
+                   maximizing_goal:extraversion + satisficing:self_rumination + 
+                   maximizing_strategy:self_rumination + 
+                   maximizing_goal:self_rumination)
+```
+
+
+Interaction graphs (decision making variables as moderator of relationship between personality and well-being)
+
+```{r}
+####alternative hypothesis as a suggestions in the discussion
+
+plotCurves(block3, plotx="neuroticism", modx="maximizing_strategy", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.92,
+           interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
+
+plotCurves(block3, plotx="self_rumination", modx="maximizing_goal", modxVals="std.dev.",
+           col = c("blue", "black", "orange"),
+           interval="confidence", cex.main = 0.95,
+           main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
+
+plotCurves(block3a, plotx="neuroticism", modx="satisficing", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.95,
+           interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
+
+plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal", 
+           modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.95,
+           interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
+```
+
