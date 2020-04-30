@@ -153,13 +153,13 @@ anova(block1,block2,block3)
 plotCurves(block3, plotx="maximizing_goal", modx="self_rumination", modxVals="std.dev.",
            col = c("blue", "black", "orange"),
            interval="confidence", cex.main = 0.95,
-           main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
+           main = "Moderation effect of self-rumination on the relationship of maximizing (goal) and depression")
 
 #moderation: depression ~ maximizing_strategy*neuroticism
 
 plotCurves(block3, plotx="maximizing_strategy", modx="neuroticism", modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.92,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
+           interval="confidence", main = "Moderation effect of neuroticism on the relationship of maximizing (strategy) and depression")
 
 ###################################################
 ### hierarchical linear regression - happiness ###
@@ -188,34 +188,34 @@ anova(block1a,block2a,block3a)
 
 plotCurves(block3a, plotx="satisficing", modx="neuroticism", modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
+           interval="confidence", main = "Moderation effect of neuroticism on the relationship of satisficing and happiness")
 
 #moderation: happiness ~ maximizing_goal*self_rumination
 
 plotCurves(block3a, plotx="maximizing_goal", modx="self_rumination", 
            modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
+           interval="confidence", main = "Moderation effect of self-rumination on the relationship of maximizing (goal) and happiness")
 
 
 ####alternative hypothesis as a suggestions in the discussion
 
-plotCurves(block3, plotx="neuroticism", modx="maximizing_strategy", modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.92,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
+figure5 <- plotCurves(block3, plotx="neuroticism", modx="maximizing_strategy", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of maximizing (strategy) on the relationship of neuroticism and depression")
 
-plotCurves(block3, plotx="self_rumination", modx="maximizing_goal", modxVals="std.dev.",
+figure6 <- plotCurves(block3, plotx="self_rumination", modx="maximizing_goal", modxVals="std.dev.",
            col = c("blue", "black", "orange"),
-           interval="confidence", cex.main = 0.95,
-           main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
+           interval="confidence", cex.main = 0.90,
+           main = "Moderation effect of maximizing (goal) on the relationship of self-rumination and depression")
 
-plotCurves(block3a, plotx="neuroticism", modx="satisficing", modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
+figure7 <- plotCurves(block3a, plotx="neuroticism", modx="satisficing", modxVals="std.dev.",
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of satisficing on the relationship of neuroticism and happiness")
 
-plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal", 
+figure8 <- plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal", 
            modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of maximizing (goal) on the relationship of self-rumination and happiness")
 
 

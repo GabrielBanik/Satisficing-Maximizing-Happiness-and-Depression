@@ -1,15 +1,19 @@
 ---
-title: "Alternative interpretations of moderation hypothesis"
+title: "Alternative interpretation of moderation hypotheses"
 author: "Gabriel Baník"
 date: "4/29/2020"
 output: html_document
 ---
 
-Alternative interpretations of moderation hypothesis as suggestion in the discussion
+Alternative interpretation of moderation hypotheses as a suggestion in the discussion
 
 ```{r include=FALSE}
 library(haven)
 data <- read_sav("decisionmaking_happiness_depression.sav")
+```
+
+```{r include=FALSE}
+data$gender <- as.numeric(as.character(data$gender))#transforme gender for ploting slopes
 ```
 
 ```{r include=FALSE}
@@ -51,25 +55,25 @@ block3a <- update(block2a, . ~ . + satisficing:neuroticism +
 
 Interaction graphs (decision making variables as moderator of relationship between personality and well-being)
 
-```{r}
+```{r echo=FALSE}
 ####alternative hypothesis as a suggestions in the discussion
 
 plotCurves(block3, plotx="neuroticism", modx="maximizing_strategy", modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.92,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of maximizing (strategy) and depression")
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of maximizing (strategy) on the relationship of neuroticism and depression")
 
 plotCurves(block3, plotx="self_rumination", modx="maximizing_goal", modxVals="std.dev.",
            col = c("blue", "black", "orange"),
-           interval="confidence", cex.main = 0.95,
-           main = "Moderation effect of self-rumination on relation of maximizing (goal) and depression")
+           interval="confidence", cex.main = 0.90,
+           main = "Moderation effect of maximizing (goal) on the relationship of self-rumination and depression")
 
 plotCurves(block3a, plotx="neuroticism", modx="satisficing", modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of neuroticism on relation of satisficing and happiness")
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of satisficing on the relationship of neuroticism and happiness")
 
 plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal", 
            modxVals="std.dev.",
-           col = c("blue", "black", "orange"), cex.main = 0.95,
-           interval="confidence", main = "Moderation effect of self-rumination on relation of maximizing (goal) and happiness")
+           col = c("blue", "black", "orange"), cex.main = 0.90,
+           interval="confidence", main = "Moderation effect of maximizing (goal) on the relationship of self-rumination and happiness")
 ```
 
