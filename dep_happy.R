@@ -132,36 +132,36 @@ data_list <- lapply(data_list, function(x){cbind(x, self_rumination = rowSums(x[
                                                                         "RRQ_12")], na.rm = TRUE))})
 ####reliability
 
-#total score maximizing as a goal
+#reliability of maximizing as a goal
 lapply(data_list, function(x){omega(x[,c("MTS7_1", "MTS7_2", "MTS7_3", "MTS7_4",
                                                 "MTS7_5", "MTS7_6", "MTS7_7")])})
-#total score maximizing as a strategy
+#reliability of maximizing as a strategy
 lapply(data_list, function(x){omega(x[,c("MI_as_1", "MI_as_2", "MI_as_3", "MI_as_4",
                                                 "MI_as_5", "MI_as_6", "MI_as_7", "MI_as_8",
                                                 "MI_as_9", "MI_as_10", "MI_as_11", "MI_as_12")])})
-#total score satisficing
+#reliability of satisficing
 lapply(data_list, function(x){omega(x[,c("DMTI_las_1", "DMTI_las_2", "DMTI_las_3", "DMTI_las_4")])})
 
-#total score extraversion
+#reliability of extraversion
 lapply(data_list, function(x){omega(x[,c("BFI44_1", "BFI44_3", "BFI44_5",
                                                 "BFI44_7", "BFI44_9", "BFI44_11", "BFI44_13",
                                                 "BFI44_15")])})
 
-#total score neuroticism
+#reliability of neuroticism
 lapply(data_list, function(x){omega(x[,c("BFI44_2", "BFI44_4", "BFI44_6",
                                                 "BFI44_8", "BFI44_10", "BFI44_12", "BFI44_14",
                                                 "BFI44_16")])})
-#total score happiness
+#reliability of happiness
 lapply(data_list, function(x){omega(x[,c("SHS_1", "SHS_2", "SHS_3", "SHS_4")])})
 
-#total score depression
+#reliability of depression
 lapply(data_list, function(x){omega(x[,c("BDI2_1", "BDI2_2", "BDI2_3",
                                                 "BDI2_4", "BDI2_5", "BDI2_6", "BDI2_7",
                                                 "BDI2_8", "BDI2_9", "BDI2_10", "BDI2_11",
                                                 "BDI2_12", "BDI2_13", "BDI2_14", "BDI2_15",
                                                 "BDI2_16", "BDI2_17", "BDI2_18", "BDI2_19",
                                                  "BDI2_20", "BDI2_21")])})
-#total score self_rumination
+#reliability of self_rumination
 lapply(data_list, function(x){omega(x[,c("RRQ_1", "RRQ_2", "RRQ_3",
                                                 "RRQ_4", "RRQ_5", "RRQ_6", "RRQ_7",
                                                 "RRQ_8", "RRQ_9", "RRQ_10", "RRQ_11",
