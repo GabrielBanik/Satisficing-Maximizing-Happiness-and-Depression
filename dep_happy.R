@@ -14,7 +14,6 @@ library(mctest)
 library(rockchalk)
 library(apaTables)
 library(lm.beta)
-library(MissMech)
 library(mice)
 library(miceadds)
 library(mitools)
@@ -60,6 +59,11 @@ md.pattern(data)
 ##remove cases with more than 80% NA
 data <- data[which(rowMeans(!is.na(data)) > 0.8), ]
 
+#####missing values
+sum(is.na(data))/prod(dim(data))
+colMeans(is.na(data))
+md.pattern(data) 
+
 #rename collumn type of data collection because of syntax error in the mice
 data <- data %>% 
   rename(data_collection = 'Type of data collection')
@@ -83,7 +87,7 @@ predM[c("Age", "Gender", "Status", "Education", "data_collection"),] <-  0 #excl
 meth[c("Gender", "Status", "Education", "data_collection")] <-  "" #exclusion from the imputation
 
 set.seed(123)
-data_imp <- mice(data, method=meth, predictorMatrix=predM, m=15, maxit = 10) #imputation of missing data - imputed object for the analysis
+data_imp <- mice(data, method=meth, predictorMatrix=predM, m=5, maxit = 10) #imputation of missing data - imputed object for the analysis
 
 #convert mice object to list
 data_list <- miceadds::mids2datlist(data_imp)
@@ -261,152 +265,65 @@ imput2 <- imp_complete[481:960, "maximizing_goal"]
 imput3 <- imp_complete[961:1440, "maximizing_goal"]
 imput4 <- imp_complete[1441:1920, "maximizing_goal"]
 imput5 <- imp_complete[1921:2400, "maximizing_goal"]
-imput6 <- imp_complete[2401:2880, "maximizing_goal"]
-imput7 <- imp_complete[2881:3360, "maximizing_goal"]
-imput8 <- imp_complete[3361:3840, "maximizing_goal"]
-imput9 <- imp_complete[3841:4320, "maximizing_goal"]
-imput10 <- imp_complete[4321:4800, "maximizing_goal"]
-imput11 <- imp_complete[4801:5280, "maximizing_goal"]
-imput12 <- imp_complete[5281:5760, "maximizing_goal"]
-imput13 <- imp_complete[5761:6240, "maximizing_goal"]
-imput14 <- imp_complete[6241:6720, "maximizing_goal"]
-imput15 <- imp_complete[6721:7200, "maximizing_goal"]
 
-data$maximizing_goal <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                     imput14 + imput15)/15, digits = 0)
+
+data$maximizing_goal <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #maximizing_strategy
 imput1 <- imp_complete[1:480, "maximizing_strategy"]
 imput2 <- imp_complete[481:960, "maximizing_strategy"]
 imput3 <- imp_complete[961:1440, "maximizing_strategy"]
 imput4 <- imp_complete[1441:1920, "maximizing_strategy"]
 imput5 <- imp_complete[1921:2400, "maximizing_strategy"]
-imput6 <- imp_complete[2401:2880, "maximizing_strategy"]
-imput7 <- imp_complete[2881:3360, "maximizing_strategy"]
-imput8 <- imp_complete[3361:3840, "maximizing_strategy"]
-imput9 <- imp_complete[3841:4320, "maximizing_strategy"]
-imput10 <- imp_complete[4321:4800, "maximizing_strategy"]
-imput11 <- imp_complete[4801:5280, "maximizing_strategy"]
-imput12 <- imp_complete[5281:5760, "maximizing_strategy"]
-imput13 <- imp_complete[5761:6240, "maximizing_strategy"]
-imput14 <- imp_complete[6241:6720, "maximizing_strategy"]
-imput15 <- imp_complete[6721:7200, "maximizing_strategy"]
 
-data$maximizing_strategy <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                                 imput14 + imput15)/15, digits = 0)
+data$maximizing_strategy <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #satisficing
 imput1 <- imp_complete[1:480, "satisficing"]
 imput2 <- imp_complete[481:960, "satisficing"]
 imput3 <- imp_complete[961:1440, "satisficing"]
 imput4 <- imp_complete[1441:1920, "satisficing"]
 imput5 <- imp_complete[1921:2400, "satisficing"]
-imput6 <- imp_complete[2401:2880, "satisficing"]
-imput7 <- imp_complete[2881:3360, "satisficing"]
-imput8 <- imp_complete[3361:3840, "satisficing"]
-imput9 <- imp_complete[3841:4320, "satisficing"]
-imput10 <- imp_complete[4321:4800, "satisficing"]
-imput11 <- imp_complete[4801:5280, "satisficing"]
-imput12 <- imp_complete[5281:5760, "satisficing"]
-imput13 <- imp_complete[5761:6240, "satisficing"]
-imput14 <- imp_complete[6241:6720, "satisficing"]
-imput15 <- imp_complete[6721:7200, "satisficing"]
 
-data$satisficing <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                                 imput14 + imput15)/15, digits = 0)
+data$satisficing <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #extraversion
 imput1 <- imp_complete[1:480, "extraversion"]
 imput2 <- imp_complete[481:960, "extraversion"]
 imput3 <- imp_complete[961:1440, "extraversion"]
 imput4 <- imp_complete[1441:1920, "extraversion"]
 imput5 <- imp_complete[1921:2400, "extraversion"]
-imput6 <- imp_complete[2401:2880, "extraversion"]
-imput7 <- imp_complete[2881:3360, "extraversion"]
-imput8 <- imp_complete[3361:3840, "extraversion"]
-imput9 <- imp_complete[3841:4320, "extraversion"]
-imput10 <- imp_complete[4321:4800, "extraversion"]
-imput11 <- imp_complete[4801:5280, "extraversion"]
-imput12 <- imp_complete[5281:5760, "extraversion"]
-imput13 <- imp_complete[5761:6240, "extraversion"]
-imput14 <- imp_complete[6241:6720, "extraversion"]
-imput15 <- imp_complete[6721:7200, "extraversion"]
 
-data$extraversion <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                              imput14 + imput15)/15, digits = 0)
+data$extraversion <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #neuroticism
 imput1 <- imp_complete[1:480, "neuroticism"]
 imput2 <- imp_complete[481:960, "neuroticism"]
 imput3 <- imp_complete[961:1440, "neuroticism"]
 imput4 <- imp_complete[1441:1920, "neuroticism"]
 imput5 <- imp_complete[1921:2400, "neuroticism"]
-imput6 <- imp_complete[2401:2880, "neuroticism"]
-imput7 <- imp_complete[2881:3360, "neuroticism"]
-imput8 <- imp_complete[3361:3840, "neuroticism"]
-imput9 <- imp_complete[3841:4320, "neuroticism"]
-imput10 <- imp_complete[4321:4800, "neuroticism"]
-imput11 <- imp_complete[4801:5280, "neuroticism"]
-imput12 <- imp_complete[5281:5760, "neuroticism"]
-imput13 <- imp_complete[5761:6240, "neuroticism"]
-imput14 <- imp_complete[6241:6720, "neuroticism"]
-imput15 <- imp_complete[6721:7200, "neuroticism"]
 
-data$neuroticism <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                              imput14 + imput15)/15, digits = 0)
+data$neuroticism <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #happiness
 imput1 <- imp_complete[1:480, "happiness"]
 imput2 <- imp_complete[481:960, "happiness"]
 imput3 <- imp_complete[961:1440, "happiness"]
 imput4 <- imp_complete[1441:1920, "happiness"]
 imput5 <- imp_complete[1921:2400, "happiness"]
-imput6 <- imp_complete[2401:2880, "happiness"]
-imput7 <- imp_complete[2881:3360, "happiness"]
-imput8 <- imp_complete[3361:3840, "happiness"]
-imput9 <- imp_complete[3841:4320, "happiness"]
-imput10 <- imp_complete[4321:4800, "happiness"]
-imput11 <- imp_complete[4801:5280, "happiness"]
-imput12 <- imp_complete[5281:5760, "happiness"]
-imput13 <- imp_complete[5761:6240, "happiness"]
-imput14 <- imp_complete[6241:6720, "happiness"]
-imput15 <- imp_complete[6721:7200, "happiness"]
 
-data$happiness <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                             imput14 + imput15)/15, digits = 0)
+data$happiness <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #depression
 imput1 <- imp_complete[1:480, "depression"]
 imput2 <- imp_complete[481:960, "depression"]
 imput3 <- imp_complete[961:1440, "depression"]
 imput4 <- imp_complete[1441:1920, "depression"]
 imput5 <- imp_complete[1921:2400, "depression"]
-imput6 <- imp_complete[2401:2880, "depression"]
-imput7 <- imp_complete[2881:3360, "depression"]
-imput8 <- imp_complete[3361:3840, "depression"]
-imput9 <- imp_complete[3841:4320, "depression"]
-imput10 <- imp_complete[4321:4800, "depression"]
-imput11 <- imp_complete[4801:5280, "depression"]
-imput12 <- imp_complete[5281:5760, "depression"]
-imput13 <- imp_complete[5761:6240, "depression"]
-imput14 <- imp_complete[6241:6720, "depression"]
-imput15 <- imp_complete[6721:7200, "depression"]
 
-data$depression <- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                           imput14 + imput15)/15, digits = 0)
+data$depression <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #self_rumination
 imput1 <- imp_complete[1:480, "self_rumination"]
 imput2 <- imp_complete[481:960, "self_rumination"]
 imput3 <- imp_complete[961:1440, "self_rumination"]
 imput4 <- imp_complete[1441:1920, "self_rumination"]
 imput5 <- imp_complete[1921:2400, "self_rumination"]
-imput6 <- imp_complete[2401:2880, "self_rumination"]
-imput7 <- imp_complete[2881:3360, "self_rumination"]
-imput8 <- imp_complete[3361:3840, "self_rumination"]
-imput9 <- imp_complete[3841:4320, "self_rumination"]
-imput10 <- imp_complete[4321:4800, "self_rumination"]
-imput11 <- imp_complete[4801:5280, "self_rumination"]
-imput12 <- imp_complete[5281:5760, "self_rumination"]
-imput13 <- imp_complete[5761:6240, "self_rumination"]
-imput14 <- imp_complete[6241:6720, "self_rumination"]
-imput15 <- imp_complete[6721:7200, "self_rumination"]
 
-data$self_rumination<- round((imput1 + imput2 + imput3 + imput4 + imput5 + imput6 + imput7 + imput8 + imput9 + imput10 + imput11 + imput12 + imput13 + 
-                            imput14 + imput15)/15, digits = 0)
+data$self_rumination<- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 
 #####################################
 #######Supplementary analysis######## this analysis is reported as exploratory analysis as suggestion for further research
@@ -527,6 +444,8 @@ summary(block3_beta <- lm.beta(block3))
 
 anova(block1,block2,block3)
 
+apa.reg.table(block3, filename = "Table9_APA.doc", table.number = 2)
+
 #moderation: depression ~ maximizing_goal*self_rumination 
 
 plotCurves(block3, plotx="maximizing_goal", modx="self_rumination", modxVals="std.dev.",
@@ -606,5 +525,5 @@ figure8 <- plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal",
 
 figure9 <- plotCurves(block3a, plotx="extraversion", modx="maximizing_strategy", 
                       modxVals="std.dev.",
-                      col = c("blue", "black", "orange"), cex.main = 0.95,
-                      interval="confidence", main = "Moderation effect of extraversion on the relationship of maximizing (strategy) and happiness")
+                      col = c("blue", "black", "orange"), cex.main = 0.90,
+                      interval="confidence", main = "Moderation effect of maximizing (strategy) on the relationship of extraversion and happiness")

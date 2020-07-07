@@ -1,6 +1,6 @@
 ---
 title: "Alternative interpretation of moderation hypotheses"
-author: "Gabriel Baník"
+author: "Gabriel Baník, Lenka Vargová"
 date: "4/29/2020"
 output: html_document
 ---
@@ -8,12 +8,179 @@ output: html_document
 Alternative interpretation of moderation hypotheses as a suggestion in the discussion
 
 ```{r include=FALSE}
-library(haven)
-data <- read_sav("decisionmaking_happiness_depression.sav")
+library(readxl)
+data <- read_excel("raw_data.xlsx")
 ```
 
 ```{r include=FALSE}
-data$gender <- as.numeric(as.character(data$gender))#transforme gender for ploting slopes
+#load packages
+
+library(tidyverse)
+library(psych)
+library(GPArotation)
+library(mctest)
+library(rockchalk)
+library(apaTables)
+library(lm.beta)
+library(mice)
+library(miceadds)
+library(mitools)
+
+####data preparation before exploratory analysis####
+
+data <- data %>% 
+  mutate_at("Gender", funs(recode(., `0`="male", `1`="female"))) %>% 
+  mutate_at("Status", funs(recode(., `0`="single", `1`="in relationship", `2`="married", `3`="divorced"))) %>% 
+  mutate_at("Education", funs(recode(., `0`="primary school", `1`="high school without graduation", `2`="high school with graduation", `3`="bachelor", `4`="master", `5`="doctoral"))) %>% 
+  mutate_at("Type of data collection", funs(recode(., `0`="online", `1`="personal")))
+
+## Remove cases with age lower than 18 = it is exclusion criteron
+data <- data[!data$Age < 18, ]
+
+## Remove cases with NA in age = we can be sure if the participant is not under 18 
+data <- data %>% drop_na(Age)
+
+##remove cases with more than 80% NA
+data <- data[which(rowMeans(!is.na(data)) > 0.8), ]
+
+#rename collumn type of data collection because of syntax error in the mice
+data <- data %>% 
+  rename(data_collection = 'Type of data collection')
+
+#recode variables according to measures manual
+data <- data %>% 
+  mutate_at(c("BFI44_3", "BFI44_4", "BFI44_9", "BFI44_10", "BFI44_13", "BFI44_14",
+              "RRQ_6", "RRQ_9", "RRQ_10"), 
+            funs(recode(.,  `1`= 5, `2`=4, `3`=3, `4`=2, `5`=1))) %>%
+  mutate_at("SHS_4", funs(recode(., `1`=7, `2`=6, `3`=5, `4`=4, `5`=3, `6`=2, `7`=1))) 
+
+#imputation of missing
+#object MICE
+init <-   mice(data, maxit=0) 
+meth <-   init$method
+predM <-   init$predictorMatrix
+
+predM[,c("Age", "Gender", "Status", "Education", "data_collection")] <-  0 #exclusion from the prediction
+predM[c("Age", "Gender", "Status", "Education", "data_collection"),] <-  0 #exclusion from the prediction
+
+meth[c("Gender", "Status", "Education", "data_collection")] <-  "" #exclusion from the imputation
+
+set.seed(123)
+data_imp <- mice(data, method=meth, predictorMatrix=predM, m=5, maxit = 10) #imputation of missing data - imputed object for the analysis
+
+#convert mice object to list
+data_list <- miceadds::mids2datlist(data_imp)
+
+#####preparing total score of the variables on the list created from the 15 imputed variables
+
+### total score and subscales 
+
+#total score maximizing as a goal
+data_list <- lapply(data_list, function(x){cbind(x, maximizing_goal = rowSums(x[,c("MTS7_1", "MTS7_2", "MTS7_3", "MTS7_4",
+                                                                             "MTS7_5", "MTS7_6", "MTS7_7")], na.rm = TRUE))})
+#total score maximizing as a strategy
+data_list <- lapply(data_list, function(x){cbind(x, maximizing_strategy = rowSums(x[,c("MI_as_1", "MI_as_2", "MI_as_3", "MI_as_4",
+                                                                                 "MI_as_5", "MI_as_6", "MI_as_7", "MI_as_8",
+                                                                                 "MI_as_9", "MI_as_10", "MI_as_11", "MI_as_12")], na.rm = TRUE))})
+#total score satisficing
+data_list <- lapply(data_list, function(x){cbind(x, satisficing = rowSums(x[,c("DMTI_las_1", "DMTI_las_2", "DMTI_las_3", "DMTI_las_4")], na.rm = TRUE))})
+
+#total score extraversion
+data_list <- lapply(data_list, function(x){cbind(x, extraversion = rowSums(x[,c("BFI44_1", "BFI44_3", "BFI44_5",
+                                                                          "BFI44_7", "BFI44_9", "BFI44_11", "BFI44_13",
+                                                                          "BFI44_15")], na.rm = TRUE))})
+
+#total score neuroticism
+data_list <- lapply(data_list, function(x){cbind(x, neuroticism = rowSums(x[,c("BFI44_2", "BFI44_4", "BFI44_6",
+                                                                         "BFI44_8", "BFI44_10", "BFI44_12", "BFI44_14",
+                                                                         "BFI44_16")], na.rm = TRUE))})
+#total score happiness
+data_list <- lapply(data_list, function(x){cbind(x, happiness = rowSums(x[,c("SHS_1", "SHS_2", "SHS_3", "SHS_4")], na.rm = TRUE))})
+
+#total score depression
+data_list <- lapply(data_list, function(x){cbind(x, depression = rowSums(x[,c("BDI2_1", "BDI2_2", "BDI2_3",
+                                                                        "BDI2_4", "BDI2_5", "BDI2_6", "BDI2_7",
+                                                                        "BDI2_8", "BDI2_9", "BDI2_10", "BDI2_11",
+                                                                        "BDI2_12", "BDI2_13", "BDI2_14", "BDI2_15",
+                                                                        "BDI2_16", "BDI2_17", "BDI2_18", "BDI2_19",
+                                                                        "BDI2_20", "BDI2_21")], na.rm = TRUE))})
+#total score self_rumination
+data_list <- lapply(data_list, function(x){cbind(x, self_rumination = rowSums(x[,c("RRQ_1", "RRQ_2", "RRQ_3",
+                                                                        "RRQ_4", "RRQ_5", "RRQ_6", "RRQ_7",
+                                                                        "RRQ_8", "RRQ_9", "RRQ_10", "RRQ_11",
+                                                                        "RRQ_12")], na.rm = TRUE))})
+
+#######transform list back to MICE object
+data_imp <- miceadds::datlist2mids(data_list)
+
+#complete all imputed dataset after lapply and create average values for variables from 15 imputed dataset (complete dataset according to Rubin's rule - Rubin (1987))
+imp_complete <- mice::complete(data_imp, "long")
+#maximizing_goal
+imput1 <- imp_complete[1:480, "maximizing_goal"]
+imput2 <- imp_complete[481:960, "maximizing_goal"]
+imput3 <- imp_complete[961:1440, "maximizing_goal"]
+imput4 <- imp_complete[1441:1920, "maximizing_goal"]
+imput5 <- imp_complete[1921:2400, "maximizing_goal"]
+
+
+data$maximizing_goal <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#maximizing_strategy
+imput1 <- imp_complete[1:480, "maximizing_strategy"]
+imput2 <- imp_complete[481:960, "maximizing_strategy"]
+imput3 <- imp_complete[961:1440, "maximizing_strategy"]
+imput4 <- imp_complete[1441:1920, "maximizing_strategy"]
+imput5 <- imp_complete[1921:2400, "maximizing_strategy"]
+
+data$maximizing_strategy <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#satisficing
+imput1 <- imp_complete[1:480, "satisficing"]
+imput2 <- imp_complete[481:960, "satisficing"]
+imput3 <- imp_complete[961:1440, "satisficing"]
+imput4 <- imp_complete[1441:1920, "satisficing"]
+imput5 <- imp_complete[1921:2400, "satisficing"]
+
+data$satisficing <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#extraversion
+imput1 <- imp_complete[1:480, "extraversion"]
+imput2 <- imp_complete[481:960, "extraversion"]
+imput3 <- imp_complete[961:1440, "extraversion"]
+imput4 <- imp_complete[1441:1920, "extraversion"]
+imput5 <- imp_complete[1921:2400, "extraversion"]
+
+data$extraversion <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#neuroticism
+imput1 <- imp_complete[1:480, "neuroticism"]
+imput2 <- imp_complete[481:960, "neuroticism"]
+imput3 <- imp_complete[961:1440, "neuroticism"]
+imput4 <- imp_complete[1441:1920, "neuroticism"]
+imput5 <- imp_complete[1921:2400, "neuroticism"]
+
+data$neuroticism <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#happiness
+imput1 <- imp_complete[1:480, "happiness"]
+imput2 <- imp_complete[481:960, "happiness"]
+imput3 <- imp_complete[961:1440, "happiness"]
+imput4 <- imp_complete[1441:1920, "happiness"]
+imput5 <- imp_complete[1921:2400, "happiness"]
+
+data$happiness <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#depression
+imput1 <- imp_complete[1:480, "depression"]
+imput2 <- imp_complete[481:960, "depression"]
+imput3 <- imp_complete[961:1440, "depression"]
+imput4 <- imp_complete[1441:1920, "depression"]
+imput5 <- imp_complete[1921:2400, "depression"]
+
+data$depression <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+#self_rumination
+imput1 <- imp_complete[1:480, "self_rumination"]
+imput2 <- imp_complete[481:960, "self_rumination"]
+imput3 <- imp_complete[961:1440, "self_rumination"]
+imput4 <- imp_complete[1441:1920, "self_rumination"]
+imput5 <- imp_complete[1921:2400, "self_rumination"]
+
+data$self_rumination<- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+
 ```
 
 ```{r include=FALSE}
@@ -27,7 +194,7 @@ library(rockchalk)
 
 block1 <- lm(depression ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
 
-block2 <- update(block1, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+block2 <- update(block1, . ~ . + Age + Gender + neuroticism + extraversion + self_rumination)
 
 block3 <- update(block2, . ~ . + satisficing:neuroticism + 
                    maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
@@ -42,7 +209,7 @@ block3 <- update(block2, . ~ . + satisficing:neuroticism +
 
 block1a <- lm(happiness ~ satisficing + maximizing_strategy + maximizing_goal, data = data)
 
-block2a <- update(block1a, . ~ . + age + gender + neuroticism + extraversion + self_rumination)
+block2a <- update(block1a, . ~ . + Age + Gender + neuroticism + extraversion + self_rumination)
 
 block3a <- update(block2a, . ~ . + satisficing:neuroticism + 
                    maximizing_strategy:neuroticism + maximizing_goal:neuroticism +
@@ -75,5 +242,10 @@ plotCurves(block3a, plotx="self_rumination", modx="maximizing_goal",
            modxVals="std.dev.",
            col = c("blue", "black", "orange"), cex.main = 0.90,
            interval="confidence", main = "Moderation effect of maximizing (goal) on the relationship of self-rumination and happiness")
+
+plotCurves(block3a, plotx="extraversion", modx="maximizing_strategy", 
+                      modxVals="std.dev.",
+                      col = c("blue", "black", "orange"), cex.main = 0.90,
+                      interval="confidence", main = "Moderation effect of maximizing (strategy) on the relationship of extraversion and happiness")
 ```
 
