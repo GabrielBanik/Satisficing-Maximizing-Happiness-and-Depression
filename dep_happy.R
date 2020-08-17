@@ -42,15 +42,6 @@ lengths(lapply(data[,45:48], unique)) #SHS items answer on items should be from 
 lengths(lapply(data[,49:69], unique)) #BDI2 items answer on items should be from 0-3
 lengths(lapply(data[,70:81], unique)) #RRQ items answer on items should be from 1-5
 
-####missing age
-sum(is.na(data$Age))/prod(dim(data$Age))
-
-## Remove cases with age lower than 18 = it is exclusion criteron
-data <- data[!data$Age < 18, ]
-
-## Remove cases with NA in age = we can be sure if the participant is not under 18 
-data <- data %>% drop_na(Age)
-
 #####missing values
 sum(is.na(data))/prod(dim(data))
 colMeans(is.na(data))
@@ -63,6 +54,12 @@ data <- data[which(rowMeans(!is.na(data)) > 0.8), ]
 sum(is.na(data))/prod(dim(data))
 colMeans(is.na(data))
 md.pattern(data) 
+
+###frequencies of sample characteristics
+table(data$Gender)
+table(data$Status)
+table(data$Education)
+table(data$data_collection)
 
 #rename collumn type of data collection because of syntax error in the mice
 data <- data %>% 
@@ -260,68 +257,68 @@ miceadds::micombine.cor(data_imp,
 #complete all imputed dataset after lapply and create average values for variables from 15 imputed dataset (complete dataset according to Rubin's rule - Rubin (1987))
 imp_complete <- mice::complete(data_imp, "long")
 #maximizing_goal
-imput1 <- imp_complete[1:480, "maximizing_goal"]
-imput2 <- imp_complete[481:960, "maximizing_goal"]
-imput3 <- imp_complete[961:1440, "maximizing_goal"]
-imput4 <- imp_complete[1441:1920, "maximizing_goal"]
-imput5 <- imp_complete[1921:2400, "maximizing_goal"]
+imput1 <- imp_complete[1:514, "maximizing_goal"]
+imput2 <- imp_complete[515:1028, "maximizing_goal"]
+imput3 <- imp_complete[1029:1542, "maximizing_goal"]
+imput4 <- imp_complete[1543:2056, "maximizing_goal"]
+imput5 <- imp_complete[2057:2570, "maximizing_goal"]
 
 
 data$maximizing_goal <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #maximizing_strategy
-imput1 <- imp_complete[1:480, "maximizing_strategy"]
-imput2 <- imp_complete[481:960, "maximizing_strategy"]
-imput3 <- imp_complete[961:1440, "maximizing_strategy"]
-imput4 <- imp_complete[1441:1920, "maximizing_strategy"]
-imput5 <- imp_complete[1921:2400, "maximizing_strategy"]
+imput1 <- imp_complete[1:514, "maximizing_strategy"]
+imput2 <- imp_complete[515:1028, "maximizing_strategy"]
+imput3 <- imp_complete[1029:1542, "maximizing_strategy"]
+imput4 <- imp_complete[1543:2056, "maximizing_strategy"]
+imput5 <- imp_complete[2057:2570, "maximizing_strategy"]
 
 data$maximizing_strategy <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #satisficing
-imput1 <- imp_complete[1:480, "satisficing"]
-imput2 <- imp_complete[481:960, "satisficing"]
-imput3 <- imp_complete[961:1440, "satisficing"]
-imput4 <- imp_complete[1441:1920, "satisficing"]
-imput5 <- imp_complete[1921:2400, "satisficing"]
+imput1 <- imp_complete[1:514, "satisficing"]
+imput2 <- imp_complete[515:1028, "satisficing"]
+imput3 <- imp_complete[1029:1542, "satisficing"]
+imput4 <- imp_complete[1543:2056, "satisficing"]
+imput5 <- imp_complete[2057:2570, "satisficing"]
 
 data$satisficing <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #extraversion
-imput1 <- imp_complete[1:480, "extraversion"]
-imput2 <- imp_complete[481:960, "extraversion"]
-imput3 <- imp_complete[961:1440, "extraversion"]
-imput4 <- imp_complete[1441:1920, "extraversion"]
-imput5 <- imp_complete[1921:2400, "extraversion"]
+imput1 <- imp_complete[1:514, "extraversion"]
+imput2 <- imp_complete[515:1028, "extraversion"]
+imput3 <- imp_complete[1029:1542, "extraversion"]
+imput4 <- imp_complete[1543:2056, "extraversion"]
+imput5 <- imp_complete[2057:2570, "extraversion"]
 
 data$extraversion <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #neuroticism
-imput1 <- imp_complete[1:480, "neuroticism"]
-imput2 <- imp_complete[481:960, "neuroticism"]
-imput3 <- imp_complete[961:1440, "neuroticism"]
-imput4 <- imp_complete[1441:1920, "neuroticism"]
-imput5 <- imp_complete[1921:2400, "neuroticism"]
+imput1 <- imp_complete[1:514, "neuroticism"]
+imput2 <- imp_complete[515:1028, "neuroticism"]
+imput3 <- imp_complete[1029:1542, "neuroticism"]
+imput4 <- imp_complete[1543:2056, "neuroticism"]
+imput5 <- imp_complete[2057:2570, "neuroticism"]
 
 data$neuroticism <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #happiness
-imput1 <- imp_complete[1:480, "happiness"]
-imput2 <- imp_complete[481:960, "happiness"]
-imput3 <- imp_complete[961:1440, "happiness"]
-imput4 <- imp_complete[1441:1920, "happiness"]
-imput5 <- imp_complete[1921:2400, "happiness"]
+imput1 <- imp_complete[1:514, "happiness"]
+imput2 <- imp_complete[515:1028, "happiness"]
+imput3 <- imp_complete[1029:1542, "happiness"]
+imput4 <- imp_complete[1543:2056, "happiness"]
+imput5 <- imp_complete[2057:2570, "happiness"]
 
 data$happiness <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #depression
-imput1 <- imp_complete[1:480, "depression"]
-imput2 <- imp_complete[481:960, "depression"]
-imput3 <- imp_complete[961:1440, "depression"]
-imput4 <- imp_complete[1441:1920, "depression"]
-imput5 <- imp_complete[1921:2400, "depression"]
+imput1 <- imp_complete[1:514, "depression"]
+imput2 <- imp_complete[515:1028, "depression"]
+imput3 <- imp_complete[1029:1542, "depression"]
+imput4 <- imp_complete[1543:2056, "depression"]
+imput5 <- imp_complete[2057:2570, "depression"]
 
 data$depression <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 #self_rumination
-imput1 <- imp_complete[1:480, "self_rumination"]
-imput2 <- imp_complete[481:960, "self_rumination"]
-imput3 <- imp_complete[961:1440, "self_rumination"]
-imput4 <- imp_complete[1441:1920, "self_rumination"]
-imput5 <- imp_complete[1921:2400, "self_rumination"]
+imput1 <- imp_complete[1:514, "self_rumination"]
+imput2 <- imp_complete[515:1028, "self_rumination"]
+imput3 <- imp_complete[1029:1542, "self_rumination"]
+imput4 <- imp_complete[1543:2056, "self_rumination"]
+imput5 <- imp_complete[2057:2570, "self_rumination"]
 
 data$self_rumination<- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
 
@@ -442,7 +439,7 @@ block3 <- update(block2, . ~ . + satisficing:neuroticism +
 summary(block3)
 summary(block3_beta <- lm.beta(block3))
 
-anova(block1,block2,block3)
+anova(block2,block3)
 
 apa.reg.table(block3, filename = "Table9_APA.doc", table.number = 2)
 
@@ -527,3 +524,50 @@ figure9 <- plotCurves(block3a, plotx="extraversion", modx="maximizing_strategy",
                       modxVals="std.dev.",
                       col = c("blue", "black", "orange"), cex.main = 0.90,
                       interval="confidence", main = "Moderation effect of maximizing (strategy) on the relationship of extraversion and happiness")
+
+
+###additional analysis after reviews
+
+miceadds::micombine.cor(data_imp, 
+                        variables = c(25,26,27,28,82,83,85,86,87,88,89), 
+                        conf.level=0.95, method="pearson", nested=FALSE, partial=NULL)
+
+#DMTI_las_1
+imput1 <- imp_complete[1:514, "DMTI_las_1"]
+imput2 <- imp_complete[515:1028, "DMTI_las_1"]
+imput3 <- imp_complete[1029:1542, "DMTI_las_1"]
+imput4 <- imp_complete[1543:2056, "DMTI_las_1"]
+imput5 <- imp_complete[2057:2570, "DMTI_las_1"]
+
+data$DMTI_las_1 <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+
+#DMTI_las_2
+imput1 <- imp_complete[1:514, "DMTI_las_2"]
+imput2 <- imp_complete[515:1028, "DMTI_las_2"]
+imput3 <- imp_complete[1029:1542, "DMTI_las_2"]
+imput4 <- imp_complete[1543:2056, "DMTI_las_2"]
+imput5 <- imp_complete[2057:2570, "DMTI_las_2"]
+
+data$DMTI_las_2 <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+
+#DMTI_las_3
+imput1 <- imp_complete[1:514, "DMTI_las_3"]
+imput2 <- imp_complete[515:1028, "DMTI_las_3"]
+imput3 <- imp_complete[1029:1542, "DMTI_las_3"]
+imput4 <- imp_complete[1543:2056, "DMTI_las_3"]
+imput5 <- imp_complete[2057:2570, "DMTI_las_3"]
+
+data$DMTI_las_3 <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+
+#DMTI_las_4
+imput1 <- imp_complete[1:514, "DMTI_las_4"]
+imput2 <- imp_complete[515:1028, "DMTI_las_4"]
+imput3 <- imp_complete[1029:1542, "DMTI_las_4"]
+imput4 <- imp_complete[1543:2056, "DMTI_las_4"]
+imput5 <- imp_complete[2057:2570, "DMTI_las_4"]
+
+data$DMTI_las_4 <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits = 0)
+
+a <- cor(data[,c(25,26,27,28,82,83,85,86,87,88,89)])
+corrplot(a)
+         
