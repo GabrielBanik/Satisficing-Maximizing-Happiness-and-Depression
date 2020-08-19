@@ -570,4 +570,27 @@ data$DMTI_las_4 <- round((imput1 + imput2 + imput3 + imput4 + imput5)/5, digits 
 
 a <- cor(data[,c(25,26,27,28,82,83,85,86,87,88,89)])
 corrplot(a)
-         
+
+#adding Bayes factor to correlation
+library(BayesFactor)
+
+b <- data[,82:89]
+
+correlationBF(b$maximizing_goal, b$maximizing_strategy)
+correlationBF(b$maximizing_goal, b$satisficing)
+correlationBF(b$maximizing_goal, b$extraversion)
+correlationBF(b$maximizing_goal, b$neuroticism)
+correlationBF(b$maximizing_goal, b$happiness)
+correlationBF(b$maximizing_goal, b$depression)
+correlationBF(b$maximizing_goal, b$self_rumination)
+correlationBF(b$maximizing_strategy, b$satisficing)
+correlationBF(b$maximizing_strategy, b$extraversion)
+correlationBF(b$maximizing_strategy, b$neuroticism)
+correlationBF(b$maximizing_strategy, b$happiness)
+correlationBF(b$maximizing_strategy, b$depression)
+correlationBF(b$maximizing_strategy, b$self_rumination)
+correlationBF(b$satisficing, b$extraversion)
+correlationBF(b$satisficing, b$neuroticism)
+correlationBF(b$satisficing, b$happiness)
+correlationBF(b$satisficing, b$depression)
+correlationBF(b$satisficing, b$self_rumination)
